@@ -5,7 +5,7 @@ import { useKeyCachedComponent } from "@/hooks/cache.ts";
 
 
 const current = ref(0)
-const { includes, makeComponent, remove, makeKey, contains, map } = useKeyCachedComponent()
+const { includes, makeComponent, remove, makeKey, contains } = useKeyCachedComponent()
 const router = useRouter()
 const onClickLeft = () => router.go(-1)
 const OUT_IN = "out-in"
@@ -44,6 +44,7 @@ router.beforeEach(async (to, from, next) => {
       :left-arrow="(includes.length > 1)"
       @click-left="onClickLeft"
   />
+<!--  用来个vant的头部占位-->
   <div style="height: var(--van-nav-bar-height)"></div>
   <div
       style="position: relative;width: 100vw; height: calc(100vh - var(--van-nav-bar-height)); outline: 1px solid black;overflow-x: hidden; overflow-y: auto;">
@@ -52,8 +53,6 @@ router.beforeEach(async (to, from, next) => {
         <keep-alive :include="includes">
           <component :is="makeComponent(Component, route.query.t)"/>
         </keep-alive>
-        <!--          <div style="position: absolute;top: 0;left: 0" :key=" route.query.t">-->
-        <!--          </div>-->
       </Transition>
     </router-view>
   </div>

@@ -1,18 +1,18 @@
-import { computed, markRaw, ref } from "vue";
+import { computed, markRaw, ref, shallowReactive } from "vue";
 
-export const useKeyCachedComponent = () => {
-    const map = ref((new Map))
-    const includes = computed(() => [...map.value.keys()])
-    const makeKey = (key: string | number) => "Key_" + key
-    const remove = (key: string) => map.value.delete(makeKey(key))
+export const useKeyCachedComponent = (prefix = "Key_") => {
+    const map = shallowReactive((new Map))
+    const includes = computed(() => [...map.keys()])
+    const makeKey = (key: string | number) => prefix + key
+    const remove = (key: string) => map.delete(makeKey(key))
     const makeComponent = (Component: any, key: number | string) => {
         // console.log('call make component', Component, key)
         if (!Component) return Component
         const name = makeKey(key)
         // const name = Component.type.__name + "_" + key
-        if (map.value.has(name)) return map.value.get(name)
-        const newComponent = markRaw({ ...Component.type, name: name })
-        map.value.set(name, newComponent)
+        if (map.has(name)) return map.get(name)
+        const newComponent = { ...Component.type, name: name }
+        map.set(name, newComponent)
         return newComponent
     }
 
@@ -22,8 +22,7 @@ export const useKeyCachedComponent = () => {
         remove,
         makeKey,
         contains: (key: string) => {
-            return map.value.has(makeKey(key))
-        },
-        map
+            return map.has(makeKey(key))
+        }
     }
 }
